@@ -15,5 +15,5 @@
 ### my_profile.dot 
 ### my_profile.prof是最新一次测试时生成的性能分析图片，运行程序时会自动在项目文件夹中创建并更新
 - 关于.py
-- 运行maintest文件是最新的，main文件是更新前的。
+- 运行main文件是最新的，maintest文件是更新前的，是未改进的。
 - test.py是测试脚本,测试异常情况。

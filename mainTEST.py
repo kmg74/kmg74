@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 import sys
 import re
@@ -9,10 +7,10 @@ import cProfile
 import pstats
 import os
 import argparse
-
+"""读取文件内容"""
 
 def read_file(file_path):
-    """读取文件内容"""
+    
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             return f.read()
@@ -23,25 +21,25 @@ def read_file(file_path):
         print(f"读取文件时出错：{e}")
         sys.exit(1)
 
-
+"""预处理文本：去除标点、转小写、压缩空格"""
 def preprocess_text(text):
-    """预处理文本：去除标点、转小写、压缩空格"""
+    
     text = re.sub(r'[^\w\s]', '', text)
     text = text.lower()
     text = re.sub(r'\s+', ' ', text).strip()
     return text
 
-
+ """获取文本的n-gram列表"""
 def get_ngrams(text, n=2):
-    """获取文本的n-gram列表"""
+   
     ngrams = []
     for i in range(len(text) - n + 1):
         ngrams.append(text[i:i + n])
     return ngrams
 
-
+ """计算两个文本的余弦相似度"""
 def calculate_cosine_similarity(text1, text2, n=2):
-    """计算两个文本的余弦相似度"""
+   
     text1 = preprocess_text(text1)
     text2 = preprocess_text(text2)
 
@@ -70,9 +68,9 @@ def calculate_cosine_similarity(text1, text2, n=2):
 
     return dot_product / (magnitude1 * magnitude2)
 
-
+ """核心查重逻辑（抽离出来以便性能分析）"""
 def run_check(original_path, plagiarized_path, output_path):
-    """核心查重逻辑（抽离出来以便性能分析）"""
+   
     try:
         original_text = read_file(original_path)
         plagiarized_text = read_file(plagiarized_path)
@@ -88,9 +86,9 @@ def run_check(original_path, plagiarized_path, output_path):
         print(f"发生错误: {e}")
         sys.exit(1)
 
-
+ """生成snakeviz交互式报告 + gprof2dot可视化图表"""
 def generate_performance_report(profile_file):
-    """生成snakeviz交互式报告 + gprof2dot可视化图表"""
+   
     try:
         # 1. 启动snakeviz交互式分析（后台运行）
         print("正在启动snakeviz交互式性能分析...")
@@ -110,9 +108,9 @@ def generate_performance_report(profile_file):
     except Exception as e:
         print(f"生成性能报告失败: {e}")
 
-
+"""主函数：支持普通运行和性能分析模式"""
 def main():
-    """主函数：支持普通运行和性能分析模式"""
+    
     parser = argparse.ArgumentParser(description='论文查重程序（带性能分析）')
     parser.add_argument('original_path', help='原文文件路径')
     parser.add_argument('plagiarized_path', help='抄袭版文件路径')

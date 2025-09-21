@@ -1,14 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
-论文查重程序 - 性能优化版
-功能：计算两篇论文的相似度，并将结果输出到指定文件
-算法：基于字符级n-gram和余弦相似度
-作者：AI助手
-版本：3.0 (性能优化版)
+基于字符级n-gram和余弦相似度，计算两篇论文的相似度，并将结果输出到指定文件，性能优化版
 """
-
 import sys
 import re
 import math
@@ -18,19 +11,19 @@ import cProfile
 import pstats
 from collections import Counter
 from functools import lru_cache
-
+"""自定义异常类，用于论文查重程序中的特定异常"""
 class PaperCheckException(Exception):
-    """自定义异常类，用于论文查重程序中的特定异常"""
+    
     pass
-def validate_file_path(file_path, is_output=False):
-    """验证文件路径的有效性"""
+def validate_file_path(file_path, is_output=False):  """验证文件路径的有效性"""
+  
     if not file_path:
         raise PaperCheckException("文件路径不能为空")
 
     if not isinstance(file_path, str):
         raise PaperCheckException("文件路径必须是字符串")
 
-    # 检查路径长度
+    # 路径长度
     if len(file_path) > 260:  # Windows路径长度限制
         raise PaperCheckException("文件路径过长")
 
@@ -49,8 +42,8 @@ def validate_file_path(file_path, is_output=False):
             raise PaperCheckException(f"文件不可读: {file_path}")
 
 
-def read_file(file_path):
-    """读取文件内容，包含详细的异常处理"""
+def read_file(file_path):  """读取文件内容，包含详细的异常处理"""
+  
     try:
         validate_file_path(file_path, is_output=False)
 
@@ -81,8 +74,8 @@ def read_file(file_path):
 
 
 @lru_cache(maxsize=128)
-def preprocess_text(text):
-    """预处理文本：去除标点符号和多余空格，转换为小写"""
+def preprocess_text(text):"""预处理文本：去除标点符号和多余空格，转换为小写"""
+    
     if not isinstance(text, str):
         raise PaperCheckException("预处理文本必须是字符串")
 
@@ -99,8 +92,7 @@ def preprocess_text(text):
 
 
 @lru_cache(maxsize=128)
-def get_ngram_frequency(text, n=2):
-    """
+ """
     直接生成n-gram频率计数器，而不构建n-gram列表
 
     参数:
@@ -110,6 +102,8 @@ def get_ngram_frequency(text, n=2):
     返回:
         Counter: n-gram频率计数器
     """
+def get_ngram_frequency(text, n=2):
+   
     if not isinstance(text, str):
         raise PaperCheckException("文本必须是字符串")
 
@@ -128,9 +122,7 @@ def get_ngram_frequency(text, n=2):
     except Exception as e:
         raise PaperCheckException(f"提取n-gram频率失败: {str(e)}")
 
-
-def calculate_cosine_similarity(text1, text2, n=2):
-    """
+"""
     计算两个文本的余弦相似度（优化版）
 
     优化点：
@@ -138,6 +130,8 @@ def calculate_cosine_similarity(text1, text2, n=2):
     2. 只计算共同n-gram的点积，减少计算量
     3. 使用更高效的Counter数据结构
     """
+def calculate_cosine_similarity(text1, text2, n=2):
+    
     try:
         # 预处理文本（使用缓存）
         text1 = preprocess_text(text1)

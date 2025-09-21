@@ -1,15 +1,13 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 """
-论文查重程序测试文件（修复版）
 测试范围：文件操作、文本预处理、n-gram频率、余弦相似度、异常处理
 """
 import unittest
 import tempfile
 import os
 import sys
-# 导入原程序的核心函数和异常类（需确保原程序与测试文件在同一目录）
-from maintest import (  # 原程序文件名需为 paper_check.py
+# 导入原程序的核心函数和异常类
+from maintest import (  
     PaperCheckException,
     validate_file_path,
     read_file,
@@ -19,15 +17,15 @@ from maintest import (  # 原程序文件名需为 paper_check.py
     write_result
 )
 
-
+ """论文查重程序测试类"""
 class TestPaperCheck(unittest.TestCase):
-    """论文查重程序测试类"""
+   
 
     # ------------------------------
     # 1. 测试文件操作相关
     # ------------------------------
-    def test_read_file_normal(self):
-        """测试正常读取文件（含中文、标点、空格）"""
+    def test_read_file_normal(self): """测试正常读取文件（含中文、标点、空格）"""
+       
         with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', delete=False) as temp:
             temp.write("Python 是一门优秀的编程语言！\n它简单易学，功能强大。")
             temp_path = temp.name
@@ -38,15 +36,15 @@ class TestPaperCheck(unittest.TestCase):
         finally:
             os.unlink(temp_path)
 
-    def test_read_file_not_exists(self):
-        """测试读取不存在的文件（异常场景）"""
+    def test_read_file_not_exists(self): """测试读取不存在的文件（异常场景）"""
+       
         non_exist_path = "不存在的文件.txt"
         with self.assertRaises(PaperCheckException) as ctx:
             read_file(non_exist_path)
         self.assertIn("文件不存在", str(ctx.exception))
 
-    def test_read_file_over_10mb(self):
-        """测试读取超过10MB的文件（异常场景）"""
+    def test_read_file_over_10mb(self):"""测试读取超过10MB的文件（异常场景）"""
+        
         with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', delete=False) as temp:
             temp.write(' ' * (11 * 1024 * 1024))  # 11MB内容
             temp_path = temp.name
@@ -74,8 +72,8 @@ class TestPaperCheck(unittest.TestCase):
     # ------------------------------
     # 3. 测试n-gram频率统计
     # ------------------------------
-    def test_get_ngram_frequency_normal(self):
-        """测试正常n-gram频率统计（n=2）"""
+    def test_get_ngram_frequency_normal(self): """测试正常n-gram频率统计（n=2）"""
+       
         preprocessed_text = "hello world"
         expected_freq = {
             "he": 1, "el": 1, "ll": 1, "lo": 1, "o ": 1,
@@ -94,15 +92,15 @@ class TestPaperCheck(unittest.TestCase):
     # ------------------------------
     # 4. 测试余弦相似度计算
     # ------------------------------
-    def test_cosine_similarity_full_match(self):
-        """测试完全相同的文本（相似度1.0）"""
+    def test_cosine_similarity_full_match(self): """测试完全相同的文本（相似度1.0）"""
+       
         text1 = "Python 是一门优秀的编程语言，简单易学。"
         text2 = "Python 是一门优秀的编程语言，简单易学。"
         similarity = calculate_cosine_similarity(text1, text2, n=2)
         self.assertAlmostEqual(similarity, 1.0, delta=0.01)
 
-    def test_cosine_similarity_no_match(self):
-        """测试完全不同的文本（无共同字符，相似度0.0）"""
+    def test_cosine_similarity_no_match(self): """测试完全不同的文本（无共同字符，相似度0.0）"""
+       
         text1 = "Apple banana orange grape"  # 英文文本
         text2 = "汽车 飞机 火车 轮船"  # 中文文本（无共同字符）
         similarity = calculate_cosine_similarity(text1, text2, n=2)
@@ -115,8 +113,8 @@ class TestPaperCheck(unittest.TestCase):
         similarity = calculate_cosine_similarity(text1, text2, n=2)
         self.assertAlmostEqual(similarity, 0.65, delta=0.05)
 
-    def test_cosine_similarity_empty_text(self):
-        """测试空文本（相似度0.0）"""
+    def test_cosine_similarity_empty_text(self): """测试空文本（相似度0.0）"""
+       
         text1 = "正常文本"
         text2 = ""  # 空文本
         similarity = calculate_cosine_similarity(text1, text2, n=2)
